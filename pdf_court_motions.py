@@ -1,16 +1,21 @@
-#Create motions for each case Brian is interested in
+#Create pdf motions for each case file we want
+import os
 import StringIO
 import unicodecsv
+home_dir = os.environ['HOME']
+data_dir = home_dir + '/data/court_motions/'
 from PyPDF2 import PdfFileWriter, PdfFileReader, PdfFileMerger
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
 # Read the signature page so we can add it later as a second page
-page2 = PdfFileReader(file('motion_template_page2.pdf','rb'))
-with open('victims_first_filter.csv', 'rU') as f:
+page2_pdf = data_dir + 'motion_template_page2.pdf'
+page2 = PdfFileReader(file(page2_pdf,'rb'))
+victims_data = data_dir + 'victims_first_filter.csv'
+with open(victims_data, 'rU') as f:
     reader = unicodecsv.reader(f)
     for row in reader:
-        case, name = row[0].split("\t")
-        outputfile = case + '.pdf' 
+        case, name = row[0].split("\t") #Excel resaved victims data as one column with a tab delimiter between values. Annoying.
+        outputfile = data_dir + case + '.pdf' 
         packet = StringIO.StringIO()
         # create a new PDF with Reportlab
         can = canvas.Canvas(packet, pagesize=letter)
@@ -22,7 +27,8 @@ with open('victims_first_filter.csv', 'rU') as f:
         packet.seek(0)
         new_pdf = PdfFileReader(packet)
         # read your existing PDF
-        existing_pdf = PdfFileReader(file("motion_template_test1.pdf", "rb"))
+        page1_pdf_template = data_dir + 'motion_template_test1.pdf'
+        existing_pdf = PdfFileReader(file(page1_pdf_template, "rb"))
         output = PdfFileWriter()
         # Fill in the form on the existing page with the name and case number
         page = existing_pdf.getPage(0)
