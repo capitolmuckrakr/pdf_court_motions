@@ -1,4 +1,5 @@
 #Create pdf motions for each case file we want
+#adapted from https://gist.github.com/kzim44/5023021
 import os
 import StringIO
 import unicodecsv
@@ -19,6 +20,8 @@ with open(victims_data, 'rU') as f:
         packet = StringIO.StringIO()
         # create a new PDF with Reportlab
         can = canvas.Canvas(packet, pagesize=letter)
+        #can.setLineWidth(.3)
+        #can.setFont('Helvetica', 12)
         can.drawString(70, 650, "State of Nevada")
         can.drawString(380, 625, case)
         can.drawString(70, 550, name)
@@ -38,7 +41,7 @@ with open(victims_data, 'rU') as f:
         outputStream = file(outputfile, "wb")
         output.write(outputStream)
         outputStream.close()
-        # Add the signature page
+        # Add the signature page, #adapted from https://www.boxcontrol.net/merge-pdf-files-with-under-10-lines-in-python.html
         merger = PdfFileMerger()
         page1 = PdfFileReader(file(outputfile,'rb'))
         merger.append(page1)
